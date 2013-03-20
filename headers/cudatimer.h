@@ -2,7 +2,7 @@
  * cudatimer.h
  *
  *  Created on: 20-03-2013
- *      Author: biborski
+ *      Author: A. Biborski
  */
 
 #ifndef CUDATIMER_H_
