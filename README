@@ -1,3 +1,0 @@
-It is basic CUDA cc 1.3 program allowing to simulate the system of masses
-described by softened newtonian forces. It is simplified and will be
-developed for full Molecular Dynamics oriented code. 
