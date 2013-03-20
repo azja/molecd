@@ -126,7 +126,10 @@ __global__ void velocityVerletIntegrator_I(void* const positions,
 
 }
 
-__global__ void velocityVerletIntegrator_II(void* const velocities, void* const accelerations, const float delta,const int N) {
+__global__ void velocityVerletIntegrator_II(void* const velocities,
+                                            void* const accelerations, 
+                                            const float delta,
+                                            const int N) {
 
 	int id = blockDim.x * blockIdx.x + threadIdx.x;
 
