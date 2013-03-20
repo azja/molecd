@@ -1,5 +1,5 @@
 /* *
- * Simple Molecular Dynamics for CUDA
+ * Simple Molecular Dynamics for CUDAfdsa
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -159,16 +159,18 @@ void molecularDynamicsWithVerlet(void* d_positions,
 	dim3 gridSize((N-1)/P +1,1,1);
 	dim3 blockSize(P,1,1);
 	CudaTimer timer;
+	calcForces<<<gridSize,blockSize,P * sizeof(float4)>>>((void*)d_positions,(void*)d_accelerations,N);
+	cudaThreadSynchronize();
 	for(int i = 0; i < steps; ++i) {
 		timer.start();
-		calcForces<<<gridSize,blockSize,P * sizeof(float4)>>>((void*)d_positions,(void*)d_accelerations,N);
-		cudaThreadSynchronize();
 		velocityVerletIntegrator_I<<<gridSize,blockSize>>>(d_positions, d_accelerations, d_velocities, delta, N);
 		cudaDeviceSynchronize();
+		calcForces<<<gridSize,blockSize,P * sizeof(float4)>>>((void*)d_positions,(void*)d_accelerations,N);
+		cudaThreadSynchronize();
 		velocityVerletIntegrator_II<<<gridSize,blockSize>>>(d_accelerations, d_velocities, delta, N);
 		cudaDeviceSynchronize();
 		timer.stop();
-		printf("Step elapsed time: %fms\n",timer.elapsed());
+	//	printf("Step elapsed time: %fms\n",timer.elapsed());
 	}
 
 }
@@ -184,8 +186,7 @@ void ringMassesCreator(float4* masses,float r,int N) {
 }
 
 
-const  int N_EL = 30720;
-
+const  int N_EL = 4096
 void printToFile(float4* data, float time,int N,FILE* f) {
 	for(int i =0;i< N;++i){
 		fprintf(f," %f %f %f %f \n",time, data[i].x,data[i].y,data[i].z);
